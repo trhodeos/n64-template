@@ -1,13 +1,11 @@
 #!/bin/bash
 set -eu
 
-# this script will build and deploy the rom to an Everdrive64 flashcart
+# This script will deploy the given rom to an Everdrive64 flashcart
 
-MAKEMASK=1 ./build.sh
+args=("$@")
 
-for f in *.n64; do
-  romfile="$f"
-done
+romfile="$ARGV[1]"
 
 function fail {
   echo $1 >&2

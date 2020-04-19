@@ -1,57 +1,19 @@
-#  gameoflife Makefile
-#  this is just the standard nusystem makefile
+WINE := /usr/local/bin/wine
+EMULATOR := /Applications/RetroArch.app/Contents/MacOS/RetroArch -L /Applications/RetroArch.app/Contents/Resources/cores/parallel_n64_libretro.dylib
 
-include $(ROOT)/usr/include/make/PRdefs
+GAME_NAME := changeme
+ROM_NAME := $(GAME_NAME).n64
 
-N64KITDIR    = c:\nintendo\n64kit
-NUSYSINCDIR  = $(N64KITDIR)/nusys/include
-NUSYSLIBDIR  = $(N64KITDIR)/nusys/lib
-NUSTDINCDIR = $(N64KITDIR)/nustd/include
-NUSTDLIBDIR = $(N64KITDIR)/nustd/lib
+.DEFAULT_GOAL := run_on_emulator
 
-LIB = $(ROOT)/usr/lib
-LPR = $(LIB)/PR
-INC = $(ROOT)/usr/include
-CC  = gcc
-LD  = ld
-MAKEROM = mild
+$(ROM_NAME):
+	export GAME_NAME="$(GAME_NAME)"; $(WINE) cmd /c compile.bat
 
-LCDEFS =	-DNU_DEBUG -DF3DEX_GBI_2
-LCINCS =	-I. -I$(NUSYSINCDIR) -I$(NUSTDINCDIR) -I$(ROOT)/usr/include/PR
-LCOPTS =	-G 0
-LDFLAGS = $(MKDEPOPT) -L$(LIB) -L$(NUSYSLIBDIR) -L$(NUSTDLIBDIR) -lnusys_d -lnustd_d -lgultra_d -L$(GCCDIR)/mipse/lib -lkmc
+run_on_emulator: $(ROM_NAME)
+	$(EMULATOR) $(ROM_NAME)
 
-OPTIMIZER =	-g
+run_on_device: $(ROM_NAME)
+	./deploy.sh $(ROM_NAME)
 
-APP =		gameoflife.out
-
-TARGETS =	gameoflife.n64
-
-HFILES =	graphic.h
-
-CODEFILES   = 	main.c stage00.c graphic.c gfxinit.c
-
-CODEOBJECTS =	$(CODEFILES:.c=.o)  $(NUSYSLIBDIR)/nusys.o
-
-DATAFILES   =	
-
-DATAOBJECTS =	$(DATAFILES:.c=.o)
-
-CODESEGMENT =	codesegment.o
-
-OBJECTS =	$(CODESEGMENT) $(DATAOBJECTS)
-
-
-default:        $(TARGETS)
-
-include $(COMMONRULES)
-
-$(CODESEGMENT):	$(CODEOBJECTS) Makefile
-		$(LD) -o $(CODESEGMENT) -r $(CODEOBJECTS) $(LDFLAGS)
-
-$(TARGETS):	$(OBJECTS)
-		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP)
-ifdef MAKEMASK
-		makemask $(TARGETS)
-endif
-		
+clean:
+	rm *.o *.n64 *.out

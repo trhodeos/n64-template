@@ -7,4 +7,4 @@ call setup.bat
 
 %startdrive%
 cd %startpath%
-exew32 make
+exew32 make --makefile Makefile.sdk
