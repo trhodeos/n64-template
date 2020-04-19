@@ -3,9 +3,7 @@ set -eu
 
 # This script will deploy the given rom to an Everdrive64 flashcart
 
-args=("$@")
-
-romfile="$ARGV[1]"
+romfile="$@"
 
 function fail {
   echo $1 >&2
