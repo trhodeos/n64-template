@@ -17,6 +17,12 @@ make build
 
 To run on RetroArch on a Mac, run:
 ```
+make
+```
+
+_or_
+
+```
 make run_on_emulator
 ```
 
